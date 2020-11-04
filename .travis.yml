@@ -1,4 +1,4 @@
-sudo: required
+# language: node_js
 services:
   - docker
 before_install:
@@ -7,3 +7,11 @@ before_install:
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
+  - gcloud config set project kubernetes-learn-294607
+  - gcloud config set compute/zone us-central1-a
+  - gcloud container clusters get-credentials multi-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t ishaanohri/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run ishaanohri/react-test npm test -- --coverage
